@@ -14,8 +14,8 @@
             --text-muted: #636e72;
             --bg-body: #f4f6f8;
             --white: #ffffff;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --radius: 10px;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
         }
 
         body {
@@ -29,55 +29,60 @@
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
         /* Tabs */
         .tabs-nav {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 25px;
             overflow-x: auto;
             padding-bottom: 10px;
         }
 
         .tab-btn {
             background: var(--white);
-            border: 1px solid #ddd;
-            padding: 10px 18px;
-            border-radius: 20px;
+            border: 1px solid #dee2e6;
+            padding: 12px 24px;
+            border-radius: 30px;
             cursor: pointer;
             white-space: nowrap;
             font-weight: 600;
             color: var(--text-muted);
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .tab-btn.active {
             background: var(--primary);
             color: var(--white);
             border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(128, 0, 32, 0.2);
         }
 
-        /* Layout: 2 Columns */
+        /* Layout */
         .calc-layout {
             display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 25px;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
             align-items: start;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .calc-layout { grid-template-columns: 1fr; }
         }
 
-        /* Left Side: Inputs */
-        .input-sections { display: flex; flex-direction: column; gap: 20px; }
+        /* Left Content */
+        .input-sections { display: flex; flex-direction: column; gap: 25px; }
 
         .card {
             background: var(--white);
             border-radius: var(--radius);
-            padding: 25px;
+            padding: 30px;
             box-shadow: var(--shadow);
             border: 1px solid #edf2f7;
         }
@@ -85,85 +90,117 @@
         .card-title {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: bold;
+            gap: 12px;
+            font-weight: 700;
             color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #f1f1f1;
+            padding-bottom: 15px;
         }
 
-        .field { margin-bottom: 20px; }
-        .field label { display: block; font-size: 0.9rem; margin-bottom: 8px; font-weight: 500; }
+        .field { margin-bottom: 25px; }
+        .field label { display: block; font-size: 0.95rem; margin-bottom: 10px; font-weight: 600; color: #444; }
 
-        /* Sliders (Jazdci) */
-        .slider-container { display: flex; align-items: center; gap: 15px; }
-        .slider-container input[type="range"] {
+        /* Slider Styling */
+        .slider-wrapper { display: flex; align-items: center; gap: 20px; }
+        .slider-wrapper input[type="range"] {
             flex: 1;
             accent-color: var(--primary);
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 5px;
             cursor: pointer;
+            -webkit-appearance: none;
         }
-        .slider-val {
-            width: 80px;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            color: var(--primary);
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px; width: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Selects & Inputs */
+        .slider-box {
+            width: 90px;
+            padding: 8px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary);
+            background: #f9f9f9;
+        }
+
         select, input[type="number"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
             font-size: 1rem;
+            color: var(--text-main);
+            outline: none;
         }
+        select:focus, input[type="number"]:focus { border-color: var(--primary); }
 
-        /* Right Side: Results Sidebar */
+        /* Right Side: Results (Sticky Sidebar) */
         .results-sidebar {
             position: sticky;
             top: 20px;
             background: var(--white);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 25px;
-            border-top: 5px solid var(--primary);
+            padding: 30px;
+            border-top: 6px solid var(--primary);
         }
 
-        .res-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; }
+        .res-header { 
+            font-weight: 800; 
+            font-size: 1.4rem; 
+            margin-bottom: 25px; 
+            color: var(--text-main);
+        }
 
-        .res-block {
-            margin-bottom: 20px;
+        .res-row {
+            margin-bottom: 22px;
             padding-bottom: 15px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f5f5f5;
         }
 
-        .res-block:last-child { border: none; }
+        .res-row:last-child { border: none; }
 
-        .res-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; display: block; }
-        .res-value-box { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.1rem; }
-        .res-value-box i { color: var(--primary); font-size: 1.3rem; width: 25px; text-align: center; }
+        .res-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: 500; }
+        .res-val-group { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2rem; }
+        .res-val-group i { color: var(--primary); font-size: 1.4rem; width: 30px; text-align: center; }
 
-        .economy-box {
+        /* Economy Highlight */
+        .economy-highlight {
             background: var(--primary-light);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary);
         }
 
-        .economy-title { color: var(--primary); font-weight: 800; font-size: 0.9rem; margin-bottom: 10px; text-transform: uppercase; }
+        .economy-highlight h4 { 
+            color: var(--primary); 
+            margin: 0 0 12px 0; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
 
-        .big-save { color: #d63031; font-size: 1.6rem; font-weight: 900; }
+        .saving-large { color: #d63031; font-size: 2rem; font-weight: 900; display: block; margin: 5px 0; }
+        .roi-badge { font-size: 1.1rem; color: var(--text-main); font-weight: 700; }
 
-        .roi-text { font-size: 1.1rem; color: var(--text-main); font-weight: 600; margin-top: 5px; }
-
-        /* Custom Scrollbar for range */
-        input[type=range] { -webkit-appearance: none; height: 6px; background: #ddd; border-radius: 5px; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--primary); cursor: pointer; }
+        .footer-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #bbb;
+            margin-top: 25px;
+            line-height: 1.4;
+        }
 
     </style>
 </head>
@@ -171,7 +208,7 @@
 
 <div class="main-container">
     <div class="tabs-nav">
-        <button class="tab-btn active" onclick="location.reload()"><i class="fas fa-fire"></i> Plyn na TČ</button>
+        <button class="tab-btn active"><i class="fas fa-fire"></i> Plyn na TČ</button>
         <button class="tab-btn"><i class="fas fa-house-damage"></i> Tepelná strata</button>
         <button class="tab-btn"><i class="fas fa-solar-panel"></i> Fotovoltika</button>
         <button class="tab-btn"><i class="fas fa-volume-high"></i> Akustika TČ</button>
@@ -181,161 +218,157 @@
         <!-- VSTUPY -->
         <div class="input-sections">
             <div class="card">
-                <div class="card-title"><i class="fas fa-user-gear"></i> Parametre systému</div>
+                <div class="card-title"><i class="fas fa-sliders-h"></i> Nastavenie spotreby</div>
                 
                 <div class="field">
-                    <label>Typ pôvodného plynového kotla</label>
-                    <select id="boiler_type" onchange="updateAll()">
-                        <option value="0.82">Nekondenzačný starý plynový kotol (82%)</option>
-                        <option value="0.96" selected>Kondenzačný plynový kotol (96%)</option>
+                    <label>Typ pôvodného zdroja vykurovania</label>
+                    <select id="boiler_type" onchange="update()">
+                        <option value="0.80">Starý nekondenzačný plynový kotol (80%)</option>
+                        <option value="0.94" selected>Kondenzačný plynový kotol (94%)</option>
                     </select>
                 </div>
 
                 <div class="field">
-                    <label>Spotreba plynu (m³/rok)</label>
-                    <div class="slider-container">
-                        <input type="range" id="gas_range" min="500" max="8000" value="2200" oninput="sync('gas_range', 'gas_val')">
-                        <input type="text" id="gas_val" class="slider-val" value="2200" readonly>
-                        <span style="font-size: 0.8rem; font-weight: bold;">m³</span>
+                    <label>Ročná spotreba plynu (m³/rok)</label>
+                    <div class="slider-wrapper">
+                        <input type="range" id="gas_r" min="400" max="7000" value="2300" oninput="sync('gas_r', 'gas_v')">
+                        <input type="text" id="gas_v" class="slider-box" value="2300" readonly>
+                        <span style="font-weight: bold; width: 30px;">m³</span>
                     </div>
                 </div>
 
                 <div class="field">
-                    <label>Vykurovaná plocha domu (m²)</label>
-                    <div class="slider-container">
-                        <input type="range" id="area_range" min="50" max="500" value="160" oninput="sync('area_range', 'area_val')">
-                        <input type="text" id="area_val" class="slider-val" value="160" readonly>
-                        <span style="font-size: 0.8rem; font-weight: bold;">m²</span>
+                    <label>Vykurovaná plocha objektu (m²)</label>
+                    <div class="slider-wrapper">
+                        <input type="range" id="area_r" min="40" max="450" value="150" oninput="sync('area_r', 'area_v')">
+                        <input type="text" id="area_v" class="slider-box" value="150" readonly>
+                        <span style="font-weight: bold; width: 30px;">m²</span>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-title"><i class="fas fa-euro-sign"></i> Ceny energií (DPH 23%)</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="card-title"><i class="fas fa-tags"></i> Ceny energií a investícia</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="field">
                         <label>Cena plynu (€/m³)</label>
-                        <input type="number" id="p_gas" value="0.78" step="0.01" oninput="updateAll()">
+                        <input type="number" id="p_gas" value="0.82" step="0.01" oninput="update()">
                     </div>
                     <div class="field">
                         <label>Cena elektriny TČ (€/kWh)</label>
-                        <input type="number" id="p_elec" value="0.165" step="0.001" oninput="updateAll()">
+                        <input type="number" id="p_elec" value="0.168" step="0.001" oninput="update()">
                     </div>
                 </div>
                 <div class="field">
-                    <label>Investícia do TČ po dotácii (€)</label>
-                    <input type="number" id="invest" value="8500" oninput="updateAll()">
+                    <label>Investícia do TČ (po odpočítaní dotácie €)</label>
+                    <input type="number" id="inv" value="8200" oninput="update()">
                 </div>
             </div>
         </div>
 
-        <!-- VÝSLEDKY (SIDEBAR) -->
+        <!-- VÝSLEDKY -->
         <div class="results-sidebar">
             <div class="res-header">Výsledky</div>
             
-            <div class="res-block">
-                <span class="res-label">Odhad tepelnej straty domu</span>
-                <div class="res-value-box">
-                    <i class="fas fa-temperature-low"></i>
-                    <span id="res_loss">0 - 0 kW</span>
+            <div class="res-row">
+                <span class="res-label">Odhad tepelnej straty objektu</span>
+                <div class="res-val-group">
+                    <i class="fas fa-temperature-arrow-down"></i>
+                    <span id="out_loss">0.0 - 0.0 kW</span>
                 </div>
             </div>
 
-            <div class="res-block">
-                <span class="res-label">Platba za plyn (pôvodná)</span>
-                <div class="res-value-box">
-                    <i class="fas fa-fire"></i>
-                    <span id="res_gas_pay">0 €/rok</span>
+            <div class="res-row">
+                <span class="res-label">Ročná platba za plyn</span>
+                <div class="res-val-group">
+                    <i class="fas fa-fire-burner"></i>
+                    <span id="out_gas">0 €</span>
                 </div>
             </div>
 
-            <div class="res-block">
-                <span class="res-label">Ak by sa kúplo čistou elektrinou</span>
-                <div class="res-value-box">
-                    <i class="fas fa-bolt"></i>
-                    <span id="res_elec_pay">0 €/rok</span>
+            <div class="res-row">
+                <span class="res-label">Náklady pri kúrení elektrinou (špirála)</span>
+                <div class="res-val-group">
+                    <i class="fas fa-bolt-lightning"></i>
+                    <span id="out_pure_elec">0 €</span>
                 </div>
             </div>
 
-            <div class="economy-box">
-                <div class="economy-title">Ekonomika s tepelným čerpadlom</div>
+            <div class="economy-highlight">
+                <h4>Ekonomika s tepelným čerpadlom</h4>
                 
-                <span class="res-label">Platba s tepelným čerpadlom</span>
-                <div class="res-value-box">
-                    <i class="fas fa-fan"></i>
-                    <span id="res_tc_pay">0 €/rok</span>
+                <span class="res-label">Ročná platba za prevádzku TČ</span>
+                <div class="res-val-group">
+                    <i class="fas fa-wind"></i>
+                    <span id="out_tc_cost">0 €</span>
                 </div>
 
-                <div style="margin-top: 15px; border-top: 1px solid #ddd; pt: 10px;">
-                    <span class="res-label">Ročná finančná úspora</span>
-                    <span class="big-save" id="res_saving">0 €/rok</span>
-                </div>
-
-                <div style="margin-top: 15px;">
-                    <span class="res-label">Návratnosť investície</span>
-                    <span class="roi-text" id="res_roi">0 rokov</span>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(128, 0, 32, 0.2);">
+                    <span class="res-label">Vaša ročná finančná úspora</span>
+                    <span class="saving-large" id="out_save">0 €</span>
+                    <span class="res-label">Návratnosť investície:</span>
+                    <span class="roi-badge" id="out_roi">0 rokov</span>
                 </div>
             </div>
-            
-            <p style="font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 15px;">
-                Výpočty sú orientačné pre klimatické pásmo SR.
+
+            <p class="footer-note">
+                Kalkulácia pre rok 2026. Započítaná DPH 23 %. <br>
+                Výhrevnosť plynu uvažovaná ako 10.55 kWh/m³.
             </p>
         </div>
     </div>
 </div>
 
 <script>
-    const GAS_TO_KWH = 10.55; // Priemer pre SR
+    const KWH_PER_M3 = 10.55;
 
-    function sync(sliderId, valId) {
-        const val = document.getElementById(sliderId).value;
-        document.getElementById(valId).value = val;
-        updateAll();
+    function sync(rId, vId) {
+        document.getElementById(vId).value = document.getElementById(rId).value;
+        update();
     }
 
-    function updateAll() {
-        // Vstupy
-        const m3 = parseFloat(document.getElementById('gas_range').value);
+    function update() {
+        // Načítanie vstupov
+        const m3 = parseFloat(document.getElementById('gas_r').value);
         const pGas = parseFloat(document.getElementById('p_gas').value);
         const pElec = parseFloat(document.getElementById('p_elec').value);
-        const eff = parseFloat(document.getElementById('boiler_type').value);
-        const invest = parseFloat(document.getElementById('invest').value);
-        
-        // 1. Výpočet reálneho tepla (kWh)
-        const heatKwh = m3 * GAS_TO_KWH * eff;
-        
-        // 2. Tepelná strata (odhad zo spotreby)
-        // Refsite používa rozsah. Spodná hranica cca / 2400h, horná / 1900h
-        const lossMin = (heatKwh / 2300);
-        const lossMax = (heatKwh / 1900);
-        document.getElementById('res_loss').innerText = lossMin.toFixed(1) + " - " + lossMax.toFixed(1) + " kW";
+        const boilerEff = parseFloat(document.getElementById('boiler_type').value);
+        const investment = parseFloat(document.getElementById('inv').value);
 
-        // 3. Platba za plyn
+        // 1. Výpočet reálnej potreby tepla v dome (kWh)
+        const heatNeeded = m3 * KWH_PER_M3 * boilerEff;
+
+        // 2. Tepelná strata (odhad podľa hodín prevádzky v SR, cca 2000-2300h)
+        const lossMin = heatNeeded / 2350;
+        const lossMax = heatNeeded / 1950;
+        document.getElementById('out_loss').innerText = lossMin.toFixed(1) + " - " + lossMax.toFixed(1) + " kW";
+
+        // 3. Náklady na plyn
         const costGas = m3 * pGas;
-        document.getElementById('res_gas_pay').innerText = Math.round(costGas).toLocaleString() + " €/rok";
+        document.getElementById('out_gas').innerText = Math.round(costGas).toLocaleString() + " €/rok";
 
-        // 4. Porovnanie s čistou elektrinou (elektrokotol účinnosť cca 99%)
-        const costPureElec = (heatKwh / 0.99) * pElec;
-        document.getElementById('res_elec_pay').innerText = Math.round(costPureElec).toLocaleString() + " €/rok";
+        // 4. Náklady čistá elektrika (elektrokotol cca 99%)
+        const costPureElec = (heatNeeded / 0.99) * pElec;
+        document.getElementById('out_pure_elec').innerText = Math.round(costPureElec).toLocaleString() + " €/rok";
 
-        // 5. Ekonomika s TČ (Priemerné sezónne SCOP pre SR cca 3.4)
+        // 5. Náklady TČ (Sezónne COP v SR priemere cca 3.4)
         const scop = 3.4;
-        const costTC = (heatKwh / scop) * pElec;
+        const costTC = (heatNeeded / scop) * pElec;
         const saving = costGas - costTC;
-        const roi = invest / saving;
+        const roi = investment / saving;
 
-        document.getElementById('res_tc_pay').innerText = Math.round(costTC).toLocaleString() + " €/rok";
-        document.getElementById('res_saving').innerText = Math.round(saving).toLocaleString() + " €/rok";
+        document.getElementById('out_tc_cost').innerText = Math.round(costTC).toLocaleString() + " €/rok";
+        document.getElementById('out_save').innerText = Math.round(saving).toLocaleString() + " €";
         
         if (saving > 0) {
-            document.getElementById('res_roi').innerText = roi.toFixed(1) + " rokov";
+            document.getElementById('out_roi').innerText = roi.toFixed(1) + " rokov";
         } else {
-            document.getElementById('res_roi').innerText = "Nereálne";
+            document.getElementById('out_roi').innerText = "Nereálne (nízka úspora)";
         }
     }
 
-    // Inicializácia pri načítaní
-    window.onload = updateAll;
+    // Spustenie po načítaní
+    window.onload = update;
 </script>
 
 </body>
