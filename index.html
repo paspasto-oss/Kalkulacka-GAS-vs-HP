@@ -2,198 +2,146 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            --primary-color: #800020; /* Vínová červená */
-            --secondary-color: #600018;
-            --text-color: #333;
-            --bg-color: #f9f9f9;
+            --vinova: #800020;
+            --vinova-light: #fdf2f4;
+            --text: #2d3436;
         }
-
-        .calc-container {
-            max-width: 500px;
+        .tc-calc {
+            max-width: 600px;
             margin: 20px auto;
-            background: #fff;
-            padding: 25px;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            border: 1px solid #e1e1e1;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-color);
-            border-top: 5px solid var(--primary-color);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: var(--text);
         }
-
-        .calc-container h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 5px rgba(128, 0, 32, 0.2);
-        }
-
-        .btn-calculate {
-            width: 100%;
-            background-color: var(--primary-color);
+        .tc-header {
+            background: var(--vinova);
             color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: background 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn-calculate:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .results {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 2px border-style: dashed;
-            border-color: #eee;
-            display: none;
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .result-item span:last-child {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .savings {
-            background: #fff0f3;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 20px;
             text-align: center;
-            margin-top: 15px;
         }
-
-        .savings-val {
-            font-size: 1.4rem;
-            display: block;
-            color: #d10000;
-            font-weight: 800;
+        .tc-body {
+            padding: 25px;
+            background: #fff;
         }
+        .tc-section-title {
+            font-weight: bold;
+            color: var(--vinova);
+            margin: 20px 0 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .tc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .input-box { margin-bottom: 15px; }
+        .input-box label { display: block; font-size: 0.85rem; margin-bottom: 5px; font-weight: 600; }
+        .input-box input, .input-box select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
+        }
+        .tc-btn {
+            width: 100%; background: var(--vinova); color: white; border: none; padding: 15px;
+            font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px;
+        }
+        .tc-btn:hover { background: #600018; }
+        .tc-results {
+            margin-top: 25px; padding: 20px; background: var(--vinova-light); border-radius: 8px; display: none;
+        }
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .res-row b { color: var(--vinova); }
+        .res-highlight { font-size: 1.2rem; border-top: 2px solid #fff; pt: 10px; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="calc-container">
-    <h2>Kalkulačka úspory: Plyn → TČ</h2>
-    
-    <div class="input-group">
-        <label>Ročná spotreba plynu (MWh)</label>
-        <input type="number" id="gasUsage" placeholder="napr. 25" step="0.1">
+<div class="tc-calc">
+    <div class="tc-header">
+        <h2 style="margin:0">Kalkulačka úspory energie</h2>
     </div>
-
-    <div class="input-group">
-        <label>Cena plynu (€/MWh s DPH)</label>
-        <input type="number" id="gasPrice" value="70">
-    </div>
-
-    <div class="input-group">
-        <label>Cena elektriny pre TČ (€/MWh s DPH)</label>
-        <input type="number" id="elecPrice" value="150">
-    </div>
-
-    <div class="input-group">
-        <label>Typ pôvodného kotla</label>
-        <select id="boilerType">
-            <option value="0.85">Starý plynový kotol (účinnosť 85%)</option>
-            <option value="0.95">Kondenzačný kotol (účinnosť 95%)</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>Predpokladané COP tepelného čerpadla</label>
-        <input type="number" id="cop" value="3.2" step="0.1">
-    </div>
-
-    <button class="btn-calculate" onclick="calculate()">Vypočítať úsporu</button>
-
-    <div id="results" class="results">
-        <div class="result-item">
-            <span>Pôvodné náklady (Plyn):</span>
-            <span id="resGasCost">0 €</span>
+    <div class="tc-body">
+        <div class="tc-section-title">Pôvodný stav (Plyn)</div>
+        <div class="tc-grid">
+            <div class="input-box">
+                <label>Typ kotla</label>
+                <select id="k_eff">
+                    <option value="0.80">Atmosférický (starý)</option>
+                    <option value="0.96">Kondenzačný</option>
+                </select>
+            </div>
+            <div class="input-box">
+                <label>Spotreba plynu (MWh/rok)</label>
+                <input type="number" id="g_usage" value="25">
+            </div>
         </div>
-        <div class="result-item">
-            <span>Nové náklady (Elektrina pre TČ):</span>
-            <span id="resTCCost">0 €</span>
+
+        <div class="tc-section-title">Nové riešenie (TČ)</div>
+        <div class="tc-grid">
+            <div class="input-box">
+                <label>Sezónne COP (účinnosť)</label>
+                <input type="number" id="tc_cop" value="3.2" step="0.1">
+            </div>
+            <div class="input-box">
+                <label>Investícia do TČ (€)</label>
+                <input type="number" id="tc_inv" value="8000">
+            </div>
         </div>
-        <div class="savings">
-            <p>Vaša ročná úspora približne:</p>
-            <span class="savings-val" id="resSavings">0 € / rok</span>
+
+        <div class="tc-section-title">Ceny energií</div>
+        <div class="tc-grid">
+            <div class="input-box">
+                <label>Cena plynu (€/MWh)</label>
+                <input type="number" id="p_gas" value="75">
+            </div>
+            <div class="input-box">
+                <label>Cena elektriny TČ (€/MWh)</label>
+                <input type="number" id="p_elec" value="160">
+            </div>
+        </div>
+
+        <button class="tc-btn" onclick="vypocet()">Vypočítať návratnosť</button>
+
+        <div id="res" class="tc-results">
+            <div class="res-row"><span>Odhadovaná tepelná strata:</span> <b id="r_loss">- kW</b></div>
+            <div class="res-row"><span>Pôvodné náklady (Plyn):</span> <b id="r_gas">- €</b></div>
+            <div class="res-row"><span>Nové náklady (TČ):</span> <b id="r_tc">- €</b></div>
+            <div class="res-row res-highlight"><span>Ročná úspora:</span> <span id="r_save">- €</span></div>
+            <div class="res-row"><span>Prostá návratnosť:</span> <b id="r_back">- rokov</b></div>
         </div>
     </div>
 </div>
 
 <script>
-function calculate() {
-    // Vstupy
-    const gasUsageMWh = parseFloat(document.getElementById('gasUsage').value);
-    const gasPrice = parseFloat(document.getElementById('gasPrice').value);
-    const elecPrice = parseFloat(document.getElementById('elecPrice').value);
-    const boilerEff = parseFloat(document.getElementById('boilerType').value);
-    const cop = parseFloat(document.getElementById('cop').value);
+function vypocet() {
+    const g_usage = parseFloat(document.getElementById('g_usage').value);
+    const k_eff = parseFloat(document.getElementById('k_eff').value);
+    const p_gas = parseFloat(document.getElementById('p_gas').value);
+    const p_elec = parseFloat(document.getElementById('p_elec').value);
+    const tc_cop = parseFloat(document.getElementById('tc_cop').value);
+    const tc_inv = parseFloat(document.getElementById('tc_inv').value);
 
-    if (isNaN(gasUsageMWh) || gasUsageMWh <= 0) {
-        alert("Prosím zadajte platnú spotrebu plynu.");
-        return;
-    }
-
-    // 1. Výpočet reálnej potreby tepla v dome (kWh)
-    const netHeatDemand = gasUsageMWh * boilerEff;
-
-    // 2. Náklady na plyn
-    const annualGasCost = gasUsageMWh * gasPrice;
-
-    // 3. Potreba elektriny pre TČ (kWh) a náklady
-    const tcElecUsage = netHeatDemand / cop;
-    const annualTCCost = tcElecUsage * elecPrice;
-
-    // 4. Úspora
-    const savings = annualGasCost - annualTCCost;
-
-    // Zobrazenie výsledkov
-    document.getElementById('resGasCost').innerText = Math.round(annualGasCost) + " €";
-    document.getElementById('resTCCost').innerText = Math.round(annualTCCost) + " €";
-    document.getElementById('resSavings').innerText = Math.round(savings) + " € / rok";
+    // Výpočet potreby tepla (kWh)
+    const teplo_potreba = g_usage * k_eff; 
     
-    document.getElementById('results').style.display = 'block';
+    // Odhad tepelnej straty (zjednodušený model pre SR/ČR podmienky)
+    const strata = (g_usage * k_eff * 1000) / 2200; 
+
+    const naklady_plyn = g_usage * p_gas;
+    const naklady_tc = (teplo_potreba / tc_cop) * p_elec;
+    const uspora = naklady_plyn - naklady_tc;
+    const navratnost = tc_inv / uspora;
+
+    document.getElementById('r_loss').innerText = strata.toFixed(1) + " kW";
+    document.getElementById('r_gas').innerText = Math.round(naklady_plyn) + " €";
+    document.getElementById('r_tc').innerText = Math.round(naklady_tc) + " €";
+    document.getElementById('r_save').innerText = Math.round(uspora) + " €";
+    document.getElementById('r_back').innerText = navratnost > 0 ? navratnost.toFixed(1) + " rokov" : "Nereálne";
+    
+    document.getElementById('res').style.display = 'block';
 }
 </script>
 
