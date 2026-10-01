@@ -583,7 +583,7 @@
   qsa('select').forEach(el=>el.addEventListener('change',calculate));
 
   $('sourceType').addEventListener('change',sourceChanged);
-  $('sourceUnit').addEventListener('change',()=>{$('gasConversion').classList.toggle('hidden',!($('sourceType').value==='gas'&&$('sourceUnit').value==='m3'));calculate()});
+  $('sourceUnit').addEventListener('change',()=>{$('gasM3Field').classList.toggle('hidden',!($('sourceType').value==='gas'&&$('sourceUnit').value==='m3'));calculate()});
   $('scopPreset').addEventListener('change',()=>{
     if($('scopPreset').value!=='manual')$('scop').value=$('scopPreset').value;
     calculate();
