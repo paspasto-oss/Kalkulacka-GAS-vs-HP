@@ -154,8 +154,8 @@
           </div>
         </div>
 
-        <div id="solidPriceBox" class="grid2 tariff-only hidden">
-          <div class="field">
+        <div id="solidPriceBox" class="grid2 hidden">
+          <div class="field tariff-only">
             <label for="solidPrice">Cena paliva (€/kg)</label>
             <input id="solidPrice" type="number" min="0" step="0.01" value="0.38">
           </div>
@@ -429,7 +429,7 @@
     $('sourceEff').value=d.eff;$('sourceUsage').value=d.usage;$('billCost').value=d.cost;$('alternativeInvestment').value=d.alt;
     rebuildUnits();$('sourceUnit').value=d.unit;
     $('gasConversion').classList.toggle('hidden',t!=='gas');
-    $('solidPriceBox').classList.toggle('hidden',!(costMode==='tariff'&&(t==='pellet'||t==='wood')));
+    $('solidPriceBox').classList.toggle('hidden',!(t==='pellet'||t==='wood'));
     $('electricSourceBox').classList.toggle('hidden',!(costMode==='tariff'&&t==='electric'));
     $('removeSourceWrap').classList.toggle('hidden',t==='electric');
     if(t==='pellet'){$('solidPrice').value=.38;$('calorific').value=4.6}
