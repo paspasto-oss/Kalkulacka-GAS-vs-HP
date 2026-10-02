@@ -47,6 +47,27 @@
     .status.bad{background:#fff3f2;border-color:#f0d0cd}
     .status small{display:block;text-transform:uppercase;color:var(--muted);font-weight:700;font-size:.7rem}
     .status strong{font-size:1.55rem}
+    .sales-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:0 0 18px}
+    .sales-card{border:1px solid #e3e8eb;border-radius:10px;padding:13px 10px;text-align:center;background:#fafbfb;min-width:0}
+    .sales-card span{display:block;font-size:.66rem;font-weight:800;text-transform:uppercase;color:var(--muted);letter-spacing:.3px}
+    .sales-card b{display:block;font-size:1.18rem;margin-top:4px;white-space:nowrap}
+    .sales-card.today{border-top:4px solid #555}
+    .sales-card.hp{border-top:4px solid var(--blue)}
+    .sales-card.save{border-top:4px solid var(--good);background:#f3faf6}
+    .chart-box{border:1px solid #e3e8eb;border-radius:10px;padding:14px;margin:0 0 18px;background:#fff}
+    .chart-title{font-size:.73rem;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:11px}
+    .year-group{margin:0 0 13px}
+    .year-group:last-child{margin-bottom:0}
+    .year-head{display:flex;justify-content:space-between;gap:10px;font-size:.72rem;margin-bottom:5px}
+    .year-head b{font-size:.74rem}
+    .bar-row{display:grid;grid-template-columns:52px 1fr 78px;gap:7px;align-items:center;margin:4px 0;font-size:.68rem}
+    .bar-track{height:12px;background:#edf1f3;border-radius:999px;overflow:hidden}
+    .bar-fill{height:100%;min-width:2px;border-radius:999px}
+    .bar-old{background:#555}
+    .bar-hp{background:var(--blue)}
+    .bar-value{text-align:right;font-weight:700;white-space:nowrap}
+    .chart-note{font-size:.66rem;color:var(--muted);margin-top:9px;line-height:1.45}
+    @media(max-width:420px){.sales-grid{grid-template-columns:1fr}.sales-card b{font-size:1.3rem}}
     .row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #eef1f2;align-items:center}
     .row span:first-child{font-size:.82rem;color:var(--muted)}
     .row b{text-align:right;font-size:.96rem}
@@ -288,6 +309,18 @@
       <div class="status" id="statusBox">
         <small>Finančný rozdiel</small>
         <strong id="statusText">–</strong>
+      </div>
+
+      <div class="sales-grid" aria-label="Rýchle porovnanie ročných nákladov">
+        <div class="sales-card today"><span>Dnes</span><b id="salesToday">0 € / rok</b></div>
+        <div class="sales-card hp"><span>S tepelným čerpadlom</span><b id="salesHp">0 € / rok</b></div>
+        <div class="sales-card save"><span>Úspora</span><b id="salesSave">0 € / rok</b></div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title">Kumulatívne náklady – investícia + prevádzka</div>
+        <div id="costChart"></div>
+        <div class="chart-note">Pôvodný zdroj zahŕňa zadanú cenu alternatívy / nutnej výmeny. TČ zahŕňa cenu TČ po dotácii. Projekcia používa dnešné ceny energií bez odhadu ich budúceho rastu.</div>
       </div>
 
       <div class="row"><span>Reálna vstupná energia – súčasný zdroj</span><b id="rInputEnergy">0 kWh/rok</b></div>
@@ -535,6 +568,31 @@
     const alt=Math.max(0,val('alternativeInvestment'));
     const invDiff=Math.max(0,inv-alt);
     const tenYear=saving*10-inv;
+
+    $('salesToday').textContent=eur(old.total)+' / rok';
+    $('salesHp').textContent=eur(newCost)+' / rok';
+    $('salesSave').textContent=eur(saving)+' / rok';
+    $('salesSave').className=saving>=0?'positive':'negative';
+
+    const horizons=[1,5,10,15];
+    const projected=horizons.map(years=>({
+      years,
+      oldTotal:alt+old.total*years,
+      hpTotal:inv+newCost*years
+    }));
+    const maxProjected=Math.max(1,...projected.flatMap(x=>[x.oldTotal,x.hpTotal]));
+    $('costChart').innerHTML=projected.map(x=>{
+      const oldW=Math.max(1,x.oldTotal/maxProjected*100);
+      const hpW=Math.max(1,x.hpTotal/maxProjected*100);
+      const diff=x.oldTotal-x.hpTotal;
+      const diffText=diff>=0?'TČ lacnejšie o '+eur(diff):'TČ drahšie o '+eur(Math.abs(diff));
+      const diffClass=diff>=0?'positive':'negative';
+      return '<div class="year-group">'+
+        '<div class="year-head"><b>'+x.years+(x.years===1?' rok':' rokov')+'</b><span class="'+diffClass+'">'+diffText+'</span></div>'+
+        '<div class="bar-row"><span>Pôvodný</span><div class="bar-track"><div class="bar-fill bar-old" style="width:'+oldW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.oldTotal)+'</span></div>'+
+        '<div class="bar-row"><span>TČ</span><div class="bar-track"><div class="bar-fill bar-hp" style="width:'+hpW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.hpTotal)+'</span></div>'+
+      '</div>';
+    }).join('');
 
     if(inputKwh<=0) warnings.push('Zadajte spotrebu väčšiu ako 0.');
     if(costMode==='bill'&&val('billCost')<=0) warnings.push('Pre režim podľa vyúčtovania zadajte skutočný náklad z faktúry.');
