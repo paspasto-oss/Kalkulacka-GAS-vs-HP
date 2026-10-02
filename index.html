@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spektra Install – Kalkulačka reálnej úspory TČ</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon/favicon-64x64.png">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -16,10 +18,13 @@
     body{margin:0;background-color:var(--bg);background-image:linear-gradient(rgba(244,242,236,.10),rgba(244,242,236,.10)),url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABIMDRANCxIQDhAUExIVGywdGxgYGzYnKSAsQDlEQz85Pj1HUGZXR0thTT0+WXlaYWltcnNyRVV9hnxvhWZwcm7/2wBDARMUFBsXGzQdHTRuST5Jbm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm7/wAARCAAmAJwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEG/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ANSAwoAAAAAAAAAoAAAAAAAAAIIoAAAAAAAAAAKAAAAAAACAAAAAAAAAAAAAAoAAIAP/2Q==");background-repeat:repeat;background-size:auto,156px 38px;color:var(--ink);font-family:Montserrat,Arial,sans-serif;line-height:1.5}
     .wrap{max-width:1400px;margin:auto;padding:32px 18px 60px}
     .hero{text-align:center;margin-bottom:28px}
+    .hero-title{display:flex;align-items:center;justify-content:center;gap:14px;max-width:1050px;margin:0 auto}
+    .hero-pig{width:64px;height:64px;object-fit:contain;flex:0 0 64px;filter:drop-shadow(0 5px 8px rgba(90,0,0,.12))}
     .hero h1{margin:0;color:var(--red);font-size:clamp(1.6rem,4vw,2.35rem);font-weight:800;text-transform:uppercase}
     .hero p{margin:8px auto 0;color:var(--muted);max-width:850px}
     .layout{display:grid;grid-template-columns:minmax(0,1fr) 480px;gap:28px;align-items:start}
     @media(max-width:1050px){.layout{grid-template-columns:1fr}}
+    @media(max-width:650px){.hero-title{gap:9px}.hero-pig{width:48px;height:48px;flex-basis:48px}.hero h1{font-size:1.45rem}}
     .card,.results{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
     .card{padding:24px;margin-bottom:20px;background:var(--card)}
     .card-title{display:flex;align-items:center;gap:12px;border-bottom:2px solid #eef1f2;padding-bottom:13px;margin-bottom:19px}
@@ -108,6 +113,8 @@
       }
       .wrap{max-width:none!important;width:100%!important;padding:0!important;margin:0!important}
       .hero{margin:0 0 7px!important;padding:0 6px!important}
+      .hero-title{gap:6px!important}
+      .hero-pig{width:28px!important;height:28px!important;flex-basis:28px!important;filter:none!important}
       .hero h1{font-size:20px!important;line-height:1.12!important;margin:0!important}
       .hero p{font-size:8.5px!important;line-height:1.3!important;margin:4px auto 0!important;max-width:170mm!important}
       .layout{display:block!important}
@@ -168,7 +175,10 @@
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>Spektra Install – Reálna úspora s tepelným čerpadlom</h1>
+    <div class="hero-title">
+      <img class="hero-pig" src="favicon/favicon-64x64.png" alt="Prasiatko – úspora">
+      <h1>Spektra Install – Reálna úspora s tepelným čerpadlom</h1>
+    </div>
     <p>Nástroj na obhliadku u zákazníka: vychádza z reálnej spotreby alebo vyúčtovania a ukáže spotrebu TČ, úsporu energie, úsporu v € a dobu návratnosti.</p>
   </header>
 
