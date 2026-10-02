@@ -78,6 +78,13 @@
     .summary{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;border-radius:10px;padding:18px;text-align:center;margin-top:16px}
     .summary small{display:block;text-transform:uppercase;font-weight:700;opacity:.9}
     .summary strong{display:block;font-size:2rem;margin-top:3px}
+    .subsidy-box{margin-top:15px;padding:14px;border:1px solid rgba(22,123,69,.25);border-radius:10px;background:#f2f8f4}
+    .subsidy-box .hint{color:#587062}
+    .payback-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .payback-grid .summary{margin-top:0}
+    .summary.grant{background:linear-gradient(135deg,#1b7f49,#0f5f35)}
+    .bar-grant{background:var(--good)}
+    @media(max-width:520px){.payback-grid{grid-template-columns:1fr}}
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}
     .btn{min-height:45px;border:0;border-radius:8px;padding:11px 13px;font-weight:800;cursor:pointer}
     .btn.primary{background:#333;color:#fff}.btn.secondary{background:#eef1f2;color:#333}
@@ -291,7 +298,7 @@
         <div class="card-title"><i class="fa-solid fa-wallet"></i><h2>Investícia a návratnosť</h2></div>
         <div class="grid2">
           <div class="field">
-            <label for="hpInvestment">Cena TČ po dotácii – komplet (€)</label>
+            <label for="hpInvestment">Cena TČ komplet bez dotácie (€)</label>
             <input id="hpInvestment" type="number" min="0" step="100" value="6500">
           </div>
           <div class="field">
@@ -300,7 +307,27 @@
             <div class="hint">Napr. nový plynový kotol, ktorý by zákazník inak musel kúpiť.</div>
           </div>
         </div>
-        <div class="banner">Nástroj ukazuje dve návratnosti: <b>celú investíciu do TČ</b> a <b>ekonomicky korektnejšiu návratnosť rozdielu investícií</b>, ak zákazník aj tak musí meniť pôvodný zdroj.</div>
+
+        <div class="check">
+          <input id="greenGrant" type="checkbox">
+          <label for="greenGrant" style="text-transform:none;font-weight:700;color:var(--ink)">Započítať dotáciu Zelená domácnostiam</label>
+        </div>
+
+        <div id="greenGrantBox" class="subsidy-box hidden">
+          <div class="grid2">
+            <div class="field">
+              <label for="subsidyAmount">Predpokladaná výška dotácie (€)</label>
+              <input id="subsidyAmount" type="number" min="0" step="100" value="4000">
+            </div>
+            <div class="field">
+              <label for="hpNetInvestment">Cena TČ po dotácii (€)</label>
+              <input id="hpNetInvestment" type="number" value="2500" readonly>
+            </div>
+          </div>
+          <div class="hint">Aktuálne SIEA uvádza pri TČ základnú sadzbu 400 €/kW, maximálne 4 000 €. Pri 15 % zvýhodnení 460 €/kW, maximálne 4 600 €. Skutočnú výšku poukážky upravte podľa konkrétnej domácnosti, výkonu a oprávnených výdavkov.</div>
+        </div>
+
+        <div class="banner">Výsledok porovná <b>návratnosť bez dotácie</b> a po zapnutí Zelenej domácnostiam aj <b>návratnosť s dotáciou</b>. Zároveň zostáva výpočet návratnosti rozdielu oproti alternatívnemu novému zdroju.</div>
       </section>
     </main>
 
@@ -320,7 +347,7 @@
       <div class="chart-box">
         <div class="chart-title">Kumulatívne náklady – investícia + prevádzka</div>
         <div id="costChart"></div>
-        <div class="chart-note">Pôvodný zdroj zahŕňa zadanú cenu alternatívy / nutnej výmeny. TČ zahŕňa cenu TČ po dotácii. Projekcia používa dnešné ceny energií bez odhadu ich budúceho rastu.</div>
+        <div class="chart-note">Pôvodný zdroj zahŕňa zadanú cenu alternatívy / nutnej výmeny. TČ bez dotácie zahŕňa plnú cenu TČ. Po zapnutí Zelenej domácnostiam sa zobrazí aj tretí scenár s odpočítanou dotáciou. Projekcia používa dnešné ceny energií bez odhadu ich budúceho rastu.</div>
       </div>
 
       <div class="row"><span>Reálna vstupná energia – súčasný zdroj</span><b id="rInputEnergy">0 kWh/rok</b></div>
@@ -339,16 +366,23 @@
       <div class="row"><span>Efektívna cena elektriny TČ</span><b id="rHpRate">0 €/kWh</b></div>
       <div class="row"><span>Rozdiel fixných poplatkov elektriny</span><b id="rFixedDelta">0 €/rok</b></div>
 
-      <div class="summary">
-        <small>Návratnosť celej ceny TČ</small>
-        <strong id="rPaybackFull">–</strong>
-      </div>
-      <div class="summary" style="background:linear-gradient(135deg,#333,#111)">
-        <small>Návratnosť rozdielu investícií</small>
-        <strong id="rPaybackDiff">–</strong>
+      <div class="payback-grid">
+        <div class="summary" style="background:linear-gradient(135deg,#555,#292929)">
+          <small>Návratnosť bez dotácie</small>
+          <strong id="rPaybackNoGrant">–</strong>
+        </div>
+        <div class="summary grant hidden" id="grantPaybackCard">
+          <small>Návratnosť so Zelenou domácnostiam</small>
+          <strong id="rPaybackGrant">–</strong>
+        </div>
       </div>
 
-      <div class="row" style="margin-top:12px"><span>Čistý efekt za 10 rokov po odpočítaní ceny TČ</span><b id="r10y">0 €</b></div>
+      <div class="row" style="margin-top:12px"><span>Investícia TČ bez dotácie</span><b id="rInvGross">0 €</b></div>
+      <div class="row hidden" id="grantAmountRow"><span>Zelená domácnostiam</span><b id="rGrantAmount">0 €</b></div>
+      <div class="row hidden" id="grantNetRow"><span>Investícia TČ po dotácii</span><b id="rInvNet">0 €</b></div>
+      <div class="row"><span>Návratnosť rozdielu investícií bez dotácie</span><b id="rPaybackDiffNoGrant">–</b></div>
+      <div class="row hidden" id="grantDiffRow"><span>Návratnosť rozdielu investícií s dotáciou</span><b id="rPaybackDiffGrant">–</b></div>
+      <div class="row"><span>Čistý efekt za 10 rokov – aktívny scenár</span><b id="r10y">0 €</b></div>
 
       <div id="validation" class="validation hidden"></div>
       <div class="actions">
@@ -564,10 +598,23 @@
     const energySave=replacedInput-hpKwh;
     const energyPct=replacedInput>0?energySave/replacedInput*100:0;
 
-    const inv=Math.max(0,val('hpInvestment'));
+    const invGross=Math.max(0,val('hpInvestment'));
+    const grantEnabled=$('greenGrant').checked;
+    const requestedGrant=Math.max(0,val('subsidyAmount',4000));
+    const grantAmount=grantEnabled ? Math.min(requestedGrant,invGross) : 0;
+    const invNet=Math.max(0,invGross-grantAmount);
     const alt=Math.max(0,val('alternativeInvestment'));
-    const invDiff=Math.max(0,inv-alt);
-    const tenYear=saving*10-inv;
+    const invDiffNoGrant=Math.max(0,invGross-alt);
+    const invDiffGrant=Math.max(0,invNet-alt);
+    const activeInv=grantEnabled ? invNet : invGross;
+    const tenYear=saving*10-activeInv;
+
+    $('hpNetInvestment').value=invNet.toFixed(0);
+    $('greenGrantBox').classList.toggle('hidden',!grantEnabled);
+    $('grantPaybackCard').classList.toggle('hidden',!grantEnabled);
+    $('grantAmountRow').classList.toggle('hidden',!grantEnabled);
+    $('grantNetRow').classList.toggle('hidden',!grantEnabled);
+    $('grantDiffRow').classList.toggle('hidden',!grantEnabled);
 
     $('salesToday').textContent=eur(old.total)+' / rok';
     $('salesHp').textContent=eur(newCost)+' / rok';
@@ -578,19 +625,23 @@
     const projected=horizons.map(years=>({
       years,
       oldTotal:alt+old.total*years,
-      hpTotal:inv+newCost*years
+      hpGross:invGross+newCost*years,
+      hpGrant:invNet+newCost*years
     }));
-    const maxProjected=Math.max(1,...projected.flatMap(x=>[x.oldTotal,x.hpTotal]));
+    const maxProjected=Math.max(1,...projected.flatMap(x=>grantEnabled?[x.oldTotal,x.hpGross,x.hpGrant]:[x.oldTotal,x.hpGross]));
     $('costChart').innerHTML=projected.map(x=>{
       const oldW=Math.max(1,x.oldTotal/maxProjected*100);
-      const hpW=Math.max(1,x.hpTotal/maxProjected*100);
-      const diff=x.oldTotal-x.hpTotal;
+      const hpW=Math.max(1,x.hpGross/maxProjected*100);
+      const grantW=Math.max(1,x.hpGrant/maxProjected*100);
+      const activeHp=grantEnabled?x.hpGrant:x.hpGross;
+      const diff=x.oldTotal-activeHp;
       const diffText=diff>=0?'TČ lacnejšie o '+eur(diff):'TČ drahšie o '+eur(Math.abs(diff));
       const diffClass=diff>=0?'positive':'negative';
       return '<div class="year-group">'+
         '<div class="year-head"><b>'+x.years+(x.years===1?' rok':' rokov')+'</b><span class="'+diffClass+'">'+diffText+'</span></div>'+
         '<div class="bar-row"><span>Pôvodný</span><div class="bar-track"><div class="bar-fill bar-old" style="width:'+oldW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.oldTotal)+'</span></div>'+
-        '<div class="bar-row"><span>TČ</span><div class="bar-track"><div class="bar-fill bar-hp" style="width:'+hpW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.hpTotal)+'</span></div>'+
+        '<div class="bar-row"><span>TČ bez dot.</span><div class="bar-track"><div class="bar-fill bar-hp" style="width:'+hpW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.hpGross)+'</span></div>'+
+        (grantEnabled?'<div class="bar-row"><span>TČ + dot.</span><div class="bar-track"><div class="bar-fill bar-grant" style="width:'+grantW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.hpGrant)+'</span></div>':'')+
       '</div>';
     }).join('');
 
@@ -615,8 +666,13 @@
     $('rHpCost').textContent=eur(hpCost);
     $('rHpRate').textContent=hpRate.toFixed(4).replace('.',',')+' €/kWh';
     $('rFixedDelta').textContent=eur(fixedDelta)+'/rok';
-    $('rPaybackFull').textContent=payback(inv,saving);
-    $('rPaybackDiff').textContent=payback(invDiff,saving);
+    $('rPaybackNoGrant').textContent=payback(invGross,saving);
+    $('rPaybackGrant').textContent=payback(invNet,saving);
+    $('rInvGross').textContent=eur(invGross);
+    $('rGrantAmount').textContent='− '+eur(grantAmount);
+    $('rInvNet').textContent=eur(invNet);
+    $('rPaybackDiffNoGrant').textContent=payback(invDiffNoGrant,saving);
+    $('rPaybackDiffGrant').textContent=payback(invDiffGrant,saving);
     $('r10y').textContent=eur(tenYear);
 
     const status=$('statusBox');
@@ -658,10 +714,11 @@
     if($('removeSource').checked){$('replaceShare').value=100}
     calculate();
   });
+  $('greenGrant').addEventListener('change',calculate);
   $('printBtn').addEventListener('click',()=>window.print());
   $('resetBtn').addEventListener('click',()=>{
     $('customer').value='';$('periodMonths').value=12;$('sourceType').value='gas';$('energyAid').value='aid';
-    $('hpInvestment').value=6500;$('scopPreset').value='3.5';$('scop').value=3.5;$('hpTariff').value='DD6';
+    $('hpInvestment').value=6500;$('greenGrant').checked=false;$('subsidyAmount').value=4000;$('scopPreset').value='3.5';$('scop').value=3.5;$('hpTariff').value='DD6';
     $('hpNtShare').value=100;$('currentElecTariff').value='DD2';$('phases').value='3';$('amps').value=25;
     $('includeTariffDelta').checked=true;$('replaceShare').value=100;$('removeSource').checked=true;
     setMode('bill');
