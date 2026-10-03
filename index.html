@@ -72,6 +72,14 @@
     .bar-hp{background:var(--blue)}
     .bar-value{text-align:right;font-weight:700;white-space:nowrap}
     .chart-note{font-size:.66rem;color:var(--muted);margin-top:9px;line-height:1.45}
+    .cost-legend{margin-top:10px;padding:10px 12px;border:1px solid #dfe5e8;border-radius:8px;background:#fafbfb}
+    .cost-legend-title{font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--ink);margin-bottom:7px}
+    .cost-legend-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .cost-legend-item{display:flex;gap:7px;align-items:flex-start;font-size:.66rem;line-height:1.35;color:var(--muted)}
+    .legend-line{display:inline-block;flex:0 0 28px;height:6px;border-radius:999px;margin-top:4px}
+    .legend-line.old{background:#555}.legend-line.hp{background:var(--blue)}.legend-line.grant{background:var(--good)}
+    .cost-legend-explain{font-size:.64rem;line-height:1.35;color:var(--muted);margin-top:7px}
+    @media(max-width:520px){.cost-legend-grid{grid-template-columns:1fr}}
     @media(max-width:420px){.sales-grid{grid-template-columns:1fr}.sales-card b{font-size:1.3rem}}
     .row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #eef1f2;align-items:center}
     .row span:first-child{font-size:.82rem;color:var(--muted)}
@@ -113,7 +121,9 @@
         print-color-adjust:exact
       }
       .wrap{max-width:none!important;width:100%!important;padding:0!important;margin:0!important}
-      .hero{margin:0 0 7px!important;padding:0 6px!important}
+      .hero{margin:0 0 5px!important;padding:0 6px!important}
+      .hero>p{display:none!important}
+      .results>h3{display:none!important}
       .hero-title{gap:6px!important}
       .hero-pig{width:28px!important;height:28px!important;flex-basis:28px!important;filter:none!important}
       .hero h1{font-size:20px!important;line-height:1.12!important;margin:0!important}
@@ -169,7 +179,13 @@
       .summary strong{font-size:16px!important;line-height:1.15!important;margin-top:2px!important}
       .validation{font-size:6.5px!important;padding:5px!important;margin-top:5px!important}
       .actions{display:none!important}
-      .foot{font-size:6.4px!important;line-height:1.3!important;margin-top:6px!important}
+      .foot{font-size:6.1px!important;line-height:1.25!important;margin-top:5px!important}
+      .cost-legend{margin-top:5px!important;padding:5px 7px!important;border-radius:5px!important;break-inside:avoid!important;page-break-inside:avoid!important}
+      .cost-legend-title{font-size:6.2px!important;line-height:1.15!important;margin-bottom:3px!important}
+      .cost-legend-grid{grid-template-columns:1fr 1fr 1fr!important;gap:5px!important}
+      .cost-legend-item{font-size:5.6px!important;line-height:1.2!important;gap:4px!important}
+      .legend-line{flex-basis:18px!important;height:4px!important;margin-top:2px!important}
+      .cost-legend-explain{font-size:5.5px!important;line-height:1.2!important;margin-top:3px!important}
       .results>*{max-width:100%}
       .results{break-inside:auto!important;page-break-inside:auto!important}
       .status,.sales-grid,.chart-box,.payback-grid,.metric{break-inside:avoid;page-break-inside:avoid}
@@ -420,9 +436,9 @@
       </div>
 
       <div class="chart-box">
-        <div class="chart-title">Kumulatívne náklady – investícia + prevádzka</div>
+        <div class="chart-title">Koľko spolu zaplatíte – kúpa zariadenia + prevádzka</div>
         <div id="costChart"></div>
-        <div class="chart-note">Pôvodný zdroj zahŕňa zadanú cenu alternatívy / nutnej výmeny. TČ bez dotácie zahŕňa plnú cenu TČ. Po zapnutí Zelenej domácnostiam sa zobrazí aj tretí scenár s odpočítanou dotáciou. Projekcia používa dnešné ceny energií bez odhadu ich budúceho rastu.</div>
+        <div class="chart-note">Porovnanie ukazuje celkové náklady od začiatku po 1, 5, 10 a 15 rokoch.</div>
       </div>
 
       <div class="row"><span>Reálna vstupná energia – súčasný zdroj</span><b id="rInputEnergy">0 kWh/rok</b></div>
@@ -467,6 +483,15 @@
       </div>
       <div class="foot" id="reportMeta"></div>
       <div class="foot"><b>Metodika:</b> spotreba paliva → energia paliva → účinnosť súčasného zdroja → teplo dodané domu → teplo / SCOP = elektrina TČ. Úspora v kWh znamená zníženie nakúpenej energie, nie zníženie potreby tepla domu. Výsledok je technicko-ekonomický odhad; skutočná spotreba závisí od počasia, teploty vykurovacej vody, hydrauliky, regulácie, TÚV a správania domácnosti.</div>
+      <div class="cost-legend">
+        <div class="cost-legend-title">Ako čítať graf celkových nákladov</div>
+        <div class="cost-legend-grid">
+          <div class="cost-legend-item"><span class="legend-line old"></span><span><b>Sivá – pôvodný zdroj:</b> cena nutnej výmeny / alternatívy + náklady na jeho prevádzku.</span></div>
+          <div class="cost-legend-item"><span class="legend-line hp"></span><span><b>Modrá – TČ bez dotácie:</b> plná investícia do TČ + náklady na elektrinu pre TČ.</span></div>
+          <div class="cost-legend-item"><span class="legend-line grant"></span><span><b>Zelená – TČ s dotáciou:</b> investícia po odpočítaní dotácie + náklady na elektrinu pre TČ.</span></div>
+        </div>
+        <div class="cost-legend-explain"><b>Dĺžka čiary = koľko spolu zaplatíte do daného roku.</b> Kratšia čiara znamená nižšie celkové náklady. Text vpravo pri každom roku ukazuje, o koľko je TČ drahšie alebo lacnejšie oproti pôvodnému zdroju. Projekcia používa dnešné ceny energií bez odhadu ich budúceho rastu.</div>
+      </div>
     </aside>
   </div>
 </div>
