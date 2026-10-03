@@ -266,9 +266,9 @@
             <select id="sourceUnit"></select>
           </div>
           <div class="field bill-only">
-            <label for="billCost">Skutočný náklad za obdobie (€)</label>
-            <input id="billCost" type="number" min="0" step="1" value="1500">
-            <div class="hint">Celkový náklad z vyúčtovania, nie výška záloh.</div>
+            <label for="billCost">Skutočný náklad z vyúčtovania (€) – voliteľné</label>
+            <input id="billCost" type="number" min="0" step="1" value="" placeholder="Ak neviete, nechajte prázdne">
+            <div class="hint">Ak pole necháte prázdne, použije sa automatický prepočet podľa tarify.</div>
           </div>
         </div>
 
@@ -278,7 +278,7 @@
             <input id="gasKwhM3" type="number" min="8" max="13" step="0.01" value="10.69">
             <div class="hint">Ak je na faktúre spotreba už v kWh, tento údaj sa nepoužije.</div>
           </div>
-          <div class="field tariff-only hidden">
+          <div class="field">
             <label for="gasTariff">Tarifa plynu SPP 2026</label>
             <select id="gasTariff">
               <option value="auto" selected>Automaticky podľa spotreby</option>
@@ -299,7 +299,7 @@
           </div>
         </div>
 
-        <div id="electricSourceBox" class="tariff-only hidden">
+        <div id="electricSourceBox" class="hidden">
           <div class="grid2">
             <div class="field">
               <label for="sourceElecTariff">Sadzba elektriny súčasného kúrenia</label>
@@ -313,6 +313,12 @@
               <input id="sourceNtShare" type="number" min="0" max="100" step="1" value="100">
             </div>
           </div>
+        </div>
+
+        <div id="autoSourceCostBox" class="banner hidden">
+          <b>Automatický prepočet spotreby:</b>
+          <span id="autoSourceCost">0 € / rok</span>
+          <span id="autoSourceCostDetail"></span>
         </div>
 
         <div class="grid2">
@@ -561,10 +567,10 @@
   };
 
   const defaults = {
-    gas:{eff:96,usage:25000,unit:'kwh',cost:1500,alt:3000},
+    gas:{eff:96,usage:25000,unit:'kwh',cost:'',alt:3000},
     pellet:{eff:88,usage:5500,unit:'kg',cost:2200,alt:5000},
     wood:{eff:75,usage:8000,unit:'kg',cost:1500,alt:4000},
-    electric:{eff:99,usage:24000,unit:'kwh',cost:4000,alt:1500}
+    electric:{eff:99,usage:24000,unit:'kwh',cost:'',alt:1500}
   };
 
   let costMode = 'bill';
@@ -624,7 +630,8 @@
     rebuildUnits();$('sourceUnit').value=d.unit;
     $('gasConversion').classList.toggle('hidden',t!=='gas');
     $('solidPriceBox').classList.toggle('hidden',!(t==='pellet'||t==='wood'));
-    $('electricSourceBox').classList.toggle('hidden',!(costMode==='tariff'&&t==='electric'));
+    $('electricSourceBox').classList.toggle('hidden',t!=='electric');
+    $('autoSourceCostBox').classList.toggle('hidden',!(t==='gas'||t==='electric'));
     $('removeSourceWrap').classList.toggle('hidden',t==='electric');
     if(t==='pellet'){$('solidPrice').value=.38;$('calorific').value=4.6}
     if(t==='wood'){$('solidPrice').value=.18;$('calorific').value=4.0}
@@ -657,28 +664,49 @@
     return q;
   }
 
+  function tariffSourceCostData(inputKwh){
+    const t=$('sourceType').value;
+    if(t==='gas'){
+      const code=gasTariffFor(inputKwh),g=GAS[$('energyAid').value][code];
+      return {total:inputKwh*g.price+g.fixed*12,fixed:g.fixed*12,label:code,rate:g.price};
+    }
+    if(t==='electric'){
+      const code=$('sourceElecTariff').value;
+      const rate=elecRate(code,val('sourceNtShare',100));
+      const fixed=elecFixed(code)*12;
+      return {total:inputKwh*rate+fixed,fixed,label:code,rate};
+    }
+    return {total:0,fixed:0,label:'',rate:0};
+  }
+
   function currentCostData(inputKwh){
     const t=$('sourceType').value;
     const months=clamp(val('periodMonths',12),1,36);
     if(costMode==='bill'){
-      const total=Math.max(0,val('billCost'))*12/months;
-      let fixed=0;
-      if(t==='gas'){
-        const code=gasTariffFor(inputKwh);
-        fixed=GAS[$('energyAid').value][code].fixed*12;
+      const entered=Math.max(0,val('billCost'));
+      if(entered>0){
+        const total=entered*12/months;
+        let fixed=0;
+        if(t==='gas'){
+          const code=gasTariffFor(inputKwh);
+          fixed=GAS[$('energyAid').value][code].fixed*12;
+        }else if(t==='electric'){
+          fixed=elecFixed($('sourceElecTariff').value)*12;
+        }
+        return {total,fixed:Math.min(total,fixed),label:'vyúčtovanie'};
       }
-      return {total,fixed:Math.min(total,fixed),label:'vyúčtovanie'};
+      if(t==='gas'||t==='electric'){
+        const auto=tariffSourceCostData(inputKwh);
+        return {...auto,label:auto.label+' – automatický prepočet'};
+      }
+      return {total:0,fixed:0,label:'vyúčtovanie'};
     }
-    if(t==='gas'){
-      const code=gasTariffFor(inputKwh),g=GAS[$('energyAid').value][code];
-      return {total:inputKwh*g.price+g.fixed*12,fixed:g.fixed*12,label:code};
-    }
+    if(t==='gas'||t==='electric') return tariffSourceCostData(inputKwh);
     if(t==='pellet'||t==='wood'){
       const kg=annualRawQuantityKg();
       return {total:kg*Math.max(0,val('solidPrice')),fixed:0,label:'cena paliva'};
     }
-    const rate=elecRate($('sourceElecTariff').value,val('sourceNtShare',100));
-    return {total:inputKwh*rate,fixed:0,label:$('sourceElecTariff').value};
+    return {total:0,fixed:0,label:''};
   }
 
   function payback(invest,saving){
@@ -701,6 +729,14 @@
     }
 
     const old=currentCostData(inputKwh);
+
+    if(t==='gas'||t==='electric'){
+      const auto=tariffSourceCostData(inputKwh);
+      $('autoSourceCost').textContent=eur(auto.total)+' / rok';
+      const rateText=auto.rate>0 ? ' • '+auto.rate.toFixed(4).replace('.',',')+' €/kWh' : '';
+      $('autoSourceCostDetail').textContent=' ('+auto.label+rateText+', vrátane fixného poplatku)';
+    }
+
     const replacedInput=inputKwh*share;
     const heat=replacedInput*eff;
     const scop=Math.max(1,val('scop',3.5));
@@ -774,7 +810,7 @@
     }).join('');
 
     if(inputKwh<=0) warnings.push('Zadajte spotrebu väčšiu ako 0.');
-    if(costMode==='bill'&&val('billCost')<=0) warnings.push('Pre režim podľa vyúčtovania zadajte skutočný náklad z faktúry.');
+    if(costMode==='bill'&&val('billCost')<=0&&!(t==='gas'||t==='electric')) warnings.push('Pre režim podľa vyúčtovania zadajte skutočný náklad z faktúry.');
     if(scop<2) warnings.push('Zadané SCOP je veľmi nízke. Overte návrhovú teplotu vody a údaje konkrétneho TČ.');
     if(t==='gas'&&costMode==='tariff'){
       const code=gasTariffFor(inputKwh);
