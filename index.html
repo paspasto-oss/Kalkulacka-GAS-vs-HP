@@ -72,6 +72,15 @@
     .bar-hp{background:var(--blue)}
     .bar-value{text-align:right;font-weight:700;white-space:nowrap}
     .chart-note{font-size:.66rem;color:var(--muted);margin-top:9px;line-height:1.45}
+    .customer-legend{margin-top:12px;padding:11px 12px;border:1px solid rgba(113,108,95,.18);border-radius:9px;background:#f8f6f1}
+    .customer-legend-title{font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+    .legend-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+    .legend-item{display:flex;align-items:flex-start;gap:7px;min-width:0;font-size:.66rem;color:var(--muted);line-height:1.35}
+    .legend-line{width:28px;height:7px;border-radius:999px;flex:0 0 28px;margin-top:3px}
+    .legend-line.old{background:#555}
+    .legend-line.hp{background:var(--blue)}
+    .legend-line.grant{background:var(--good)}
+    .legend-help{font-size:.64rem;color:var(--muted);line-height:1.4;margin-top:7px}
     .cost-legend{margin-top:10px;padding:10px 12px;border:1px solid #dfe5e8;border-radius:8px;background:#fafbfb}
     .cost-legend-title{font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--ink);margin-bottom:7px}
     .cost-legend-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -127,7 +136,7 @@
       .hero-title{gap:6px!important}
       .hero-pig{width:28px!important;height:28px!important;flex-basis:28px!important;filter:none!important}
       .hero h1{font-size:20px!important;line-height:1.12!important;margin:0!important}
-      .hero p{font-size:8.5px!important;line-height:1.3!important;margin:4px auto 0!important;max-width:170mm!important}
+      .hero p{display:none!important}
       .layout{display:block!important}
       .inputs{display:none!important}
       .results{
@@ -140,7 +149,7 @@
         border-radius:8px!important;
         background:#f4f2ec!important
       }
-      .results h3{font-size:14px!important;line-height:1.15!important;margin:0 0 8px!important}
+      .results h3{display:none!important}
       .status{padding:7px!important;margin:0 0 8px!important;border-radius:6px!important}
       .status small{font-size:6.5px!important;line-height:1.15!important}
       .status strong{font-size:16px!important;line-height:1.2!important}
@@ -157,6 +166,12 @@
       .bar-track{height:6px!important}
       .bar-value{font-size:6px!important}
       .chart-note{font-size:5.8px!important;line-height:1.25!important;margin-top:4px!important}
+      .customer-legend{margin-top:6px!important;padding:6px 7px!important;border-radius:6px!important;break-inside:avoid;page-break-inside:avoid}
+      .customer-legend-title{font-size:6.2px!important;line-height:1.15!important;margin-bottom:4px!important}
+      .legend-grid{grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
+      .legend-item{gap:4px!important;font-size:5.8px!important;line-height:1.22!important}
+      .legend-line{width:22px!important;height:5px!important;flex-basis:22px!important;margin-top:2px!important}
+      .legend-help{font-size:5.7px!important;line-height:1.25!important;margin-top:4px!important}
       .row{padding:4px 0!important;gap:8px!important;min-height:0!important;break-inside:avoid;page-break-inside:avoid}
       .row span:first-child{font-size:7.5px!important;line-height:1.2!important}
       .row b{font-size:8px!important;line-height:1.2!important}
@@ -188,7 +203,7 @@
       .cost-legend-explain{font-size:5.5px!important;line-height:1.2!important;margin-top:3px!important}
       .results>*{max-width:100%}
       .results{break-inside:auto!important;page-break-inside:auto!important}
-      .status,.sales-grid,.chart-box,.payback-grid,.metric{break-inside:avoid;page-break-inside:avoid}
+      .status,.sales-grid,.chart-box,.payback-grid,.metric,.customer-legend{break-inside:avoid;page-break-inside:avoid}
     }
   </style>
 </head>
@@ -477,6 +492,17 @@
       <div class="row"><span>Čistý efekt za 10 rokov – aktívny scenár</span><b id="r10y">0 €</b></div>
 
       <div id="validation" class="validation hidden"></div>
+
+      <div class="customer-legend">
+        <div class="customer-legend-title">Ako čítať graf celkových nákladov</div>
+        <div class="legend-grid">
+          <div class="legend-item"><span class="legend-line old"></span><span><b>Sivá – pôvodný zdroj:</b> cena alternatívnej výmeny + ďalšia prevádzka pôvodného vykurovania.</span></div>
+          <div class="legend-item"><span class="legend-line hp"></span><span><b>Modrá – TČ bez dotácie:</b> plná investícia do tepelného čerpadla + jeho prevádzka.</span></div>
+          <div class="legend-item"><span class="legend-line grant"></span><span><b>Zelená – TČ s dotáciou:</b> investícia po odpočítaní dotácie + prevádzka TČ.</span></div>
+        </div>
+        <div class="legend-help">Porovnávajte dĺžku čiar v rovnakom roku. Kratšia čiara znamená nižšie celkové náklady. Text „TČ lacnejšie/drahšie o … €“ ukazuje rozdiel oproti pôvodnému zdroju.</div>
+      </div>
+
       <div class="actions">
         <button type="button" class="btn primary" id="printBtn">Vytlačiť / PDF</button>
         <button type="button" class="btn secondary" id="resetBtn">Obnoviť</button>
