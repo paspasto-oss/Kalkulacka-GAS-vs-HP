@@ -72,6 +72,18 @@
     .bar-hp{background:var(--blue)}
     .bar-value{text-align:right;font-weight:700;white-space:nowrap}
     .chart-note{font-size:.66rem;color:var(--muted);margin-top:9px;line-height:1.45}
+    .consumption-chart{display:grid;gap:12px}
+    .consumption-row{display:grid;grid-template-columns:145px minmax(0,1fr) 125px;gap:10px;align-items:center}
+    .consumption-label{font-size:.75rem;font-weight:800;color:var(--ink);line-height:1.25}
+    .consumption-track{height:18px;background:#e9eef1;border-radius:999px;overflow:hidden}
+    .consumption-fill{height:100%;border-radius:999px;min-width:3px}
+    .consumption-fill.old{background:#555}
+    .consumption-fill.hp{background:var(--blue)}
+    .consumption-value{text-align:right;font-size:.82rem;font-weight:800;white-space:nowrap}
+    .consumption-saving{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:3px;padding:10px 12px;border-radius:8px;background:#f2f8f4;border:1px solid rgba(22,123,69,.22)}
+    .consumption-saving span{font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--good)}
+    .consumption-saving b{font-size:1.05rem;color:var(--good);white-space:nowrap}
+    @media(max-width:620px){.consumption-row{grid-template-columns:1fr}.consumption-value{text-align:left}.consumption-track{height:15px}}
     .customer-legend{margin-top:12px;padding:11px 12px;border:1px solid rgba(113,108,95,.18);border-radius:9px;background:#f8f6f1}
     .customer-legend-title{font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
     .legend-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
@@ -166,6 +178,14 @@
       .bar-track{height:6px!important}
       .bar-value{font-size:6px!important}
       .chart-note{font-size:5.8px!important;line-height:1.25!important;margin-top:4px!important}
+      .consumption-chart{gap:5px!important}
+      .consumption-row{grid-template-columns:95px 1fr 78px!important;gap:5px!important}
+      .consumption-label{font-size:6.3px!important;line-height:1.15!important}
+      .consumption-track{height:8px!important}
+      .consumption-value{font-size:6.5px!important}
+      .consumption-saving{padding:5px 7px!important;margin-top:2px!important;border-radius:5px!important}
+      .consumption-saving span{font-size:5.8px!important}
+      .consumption-saving b{font-size:7px!important}
       .customer-legend{margin-top:6px!important;padding:6px 7px!important;border-radius:6px!important;break-inside:avoid;page-break-inside:avoid}
       .customer-legend-title{font-size:6.2px!important;line-height:1.15!important;margin-bottom:4px!important}
       .legend-grid{grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
@@ -203,7 +223,7 @@
       .cost-legend-explain{font-size:5.5px!important;line-height:1.2!important;margin-top:3px!important}
       .results>*{max-width:100%}
       .results{break-inside:auto!important;page-break-inside:auto!important}
-      .status,.sales-grid,.chart-box,.payback-grid,.metric,.customer-legend{break-inside:avoid;page-break-inside:avoid}
+      .status,.sales-grid,.chart-box,.payback-grid,.metric{break-inside:avoid;page-break-inside:avoid}
     }
   </style>
 </head>
@@ -457,9 +477,9 @@
       </div>
 
       <div class="chart-box">
-        <div class="chart-title">Koľko spolu zaplatíte – kúpa zariadenia + prevádzka</div>
-        <div id="costChart"></div>
-        <div class="chart-note">Porovnanie ukazuje celkové náklady od začiatku po 1, 5, 10 a 15 rokoch.</div>
+        <div class="chart-title">Ročná spotreba energie – pôvodný zdroj vs. tepelné čerpadlo</div>
+        <div id="consumptionChart" class="consumption-chart"></div>
+        <div class="chart-note">Obe hodnoty sú v kWh/rok, aby bolo porovnanie priamo zrozumiteľné. Potreba tepla domu zostáva rovnaká; tepelné čerpadlo časť energie získava z okolitého vzduchu.</div>
       </div>
 
       <div class="row"><span>Reálna vstupná energia – súčasný zdroj</span><b id="rInputEnergy">0 kWh/rok</b></div>
@@ -498,16 +518,6 @@
       <div class="row"><span>Čistý efekt za 10 rokov – aktívny scenár</span><b id="r10y">0 €</b></div>
 
       <div id="validation" class="validation hidden"></div>
-
-      <div class="customer-legend">
-        <div class="customer-legend-title">Ako čítať graf celkových nákladov</div>
-        <div class="legend-grid">
-          <div class="legend-item"><span class="legend-line old"></span><span><b>Sivá – pôvodný zdroj:</b> cena alternatívnej výmeny + ďalšia prevádzka pôvodného vykurovania.</span></div>
-          <div class="legend-item"><span class="legend-line hp"></span><span><b>Modrá – TČ bez dotácie:</b> plná investícia do tepelného čerpadla + jeho prevádzka.</span></div>
-          <div class="legend-item"><span class="legend-line grant"></span><span><b>Zelená – TČ s dotáciou:</b> investícia po odpočítaní dotácie + prevádzka TČ.</span></div>
-        </div>
-        <div class="legend-help">Porovnávajte dĺžku čiar v rovnakom roku. Kratšia čiara znamená nižšie celkové náklady. Text „TČ lacnejšie/drahšie o … €“ ukazuje rozdiel oproti pôvodnému zdroju.</div>
-      </div>
 
       <div class="actions">
         <button type="button" class="btn primary" id="printBtn">Vytlačiť / PDF</button>
@@ -785,29 +795,33 @@
     $('salesSave').textContent=eur(saving)+' / rok';
     $('salesSave').className=saving>=0?'positive':'negative';
 
-    const horizons=[1,5,10,15];
-    const projected=horizons.map(years=>({
-      years,
-      oldTotal:alt+old.total*years,
-      hpGross:invGross+newCost*years,
-      hpGrant:invNet+newCost*years
-    }));
-    const maxProjected=Math.max(1,...projected.flatMap(x=>grantEnabled?[x.oldTotal,x.hpGross,x.hpGrant]:[x.oldTotal,x.hpGross]));
-    $('costChart').innerHTML=projected.map(x=>{
-      const oldW=Math.max(1,x.oldTotal/maxProjected*100);
-      const hpW=Math.max(1,x.hpGross/maxProjected*100);
-      const grantW=Math.max(1,x.hpGrant/maxProjected*100);
-      const activeHp=grantEnabled?x.hpGrant:x.hpGross;
-      const diff=x.oldTotal-activeHp;
-      const diffText=diff>=0?'TČ lacnejšie o '+eur(diff):'TČ drahšie o '+eur(Math.abs(diff));
-      const diffClass=diff>=0?'positive':'negative';
-      return '<div class="year-group">'+
-        '<div class="year-head"><b>'+x.years+(x.years===1?' rok':' rokov')+'</b><span class="'+diffClass+'">'+diffText+'</span></div>'+
-        '<div class="bar-row"><span>Pôvodný</span><div class="bar-track"><div class="bar-fill bar-old" style="width:'+oldW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.oldTotal)+'</span></div>'+
-        '<div class="bar-row"><span>TČ bez dot.</span><div class="bar-track"><div class="bar-fill bar-hp" style="width:'+hpW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.hpGross)+'</span></div>'+
-        (grantEnabled?'<div class="bar-row"><span>TČ + dot.</span><div class="bar-track"><div class="bar-fill bar-grant" style="width:'+grantW.toFixed(1)+'%"></div></div><span class="bar-value">'+eur(x.hpGrant)+'</span></div>':'')+
+    const sourceNames={
+      gas:'Plynový kotol',
+      electric:'Elektrické vykurovanie',
+      pellet:'Peletový kotol',
+      wood:'Kotol na drevo'
+    };
+    const sourceName=sourceNames[t]||'Pôvodný zdroj';
+    const originalKwh=Math.max(0,replacedInput);
+    const hpCompareKwh=Math.max(0,hpKwh);
+    const maxConsumption=Math.max(1,originalKwh,hpCompareKwh);
+    const oldWidth=Math.max(1,originalKwh/maxConsumption*100);
+    const hpWidth=Math.max(1,hpCompareKwh/maxConsumption*100);
+    $('consumptionChart').innerHTML=
+      '<div class="consumption-row">'+
+        '<div class="consumption-label">'+sourceName+'</div>'+
+        '<div class="consumption-track"><div class="consumption-fill old" style="width:'+oldWidth.toFixed(1)+'%"></div></div>'+
+        '<div class="consumption-value">'+num(originalKwh)+' kWh/rok</div>'+
+      '</div>'+
+      '<div class="consumption-row">'+
+        '<div class="consumption-label">Tepelné čerpadlo</div>'+
+        '<div class="consumption-track"><div class="consumption-fill hp" style="width:'+hpWidth.toFixed(1)+'%"></div></div>'+
+        '<div class="consumption-value">'+num(hpCompareKwh)+' kWh/rok</div>'+
+      '</div>'+
+      '<div class="consumption-saving">'+
+        '<span>Úspora nakúpenej energie</span>'+
+        '<b>'+num(energySave)+' kWh/rok · '+pct(energyPct)+'</b>'+
       '</div>';
-    }).join('');
 
     if(inputKwh<=0) warnings.push('Zadajte spotrebu väčšiu ako 0.');
     if(costMode==='bill'&&val('billCost')<=0&&!(t==='gas'||t==='electric')) warnings.push('Pre režim podľa vyúčtovania zadajte skutočný náklad z faktúry.');
