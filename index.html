@@ -26,6 +26,7 @@
     .hero-title{display:flex;align-items:center;justify-content:center;gap:14px;max-width:1050px;margin:0 auto}
     .hero-pig{width:64px;height:64px;object-fit:contain;flex:0 0 64px;filter:drop-shadow(0 5px 8px rgba(90,0,0,.12))}
     .hero h1{margin:0;color:var(--red);font-size:clamp(1.6rem,4vw,2.35rem);font-weight:800;text-transform:uppercase}
+    .report-customer{margin-bottom:12px;padding:8px 10px;border-bottom:1px solid var(--line);font-size:.85rem;overflow-wrap:anywhere}
     .hero p{margin:8px auto 0;color:var(--muted);max-width:850px}
     .layout{display:grid;grid-template-columns:minmax(0,1fr) 480px;gap:28px;align-items:start}
     @media(max-width:1050px){.layout{grid-template-columns:1fr}}
@@ -199,6 +200,7 @@
         background:#f4f2ec!important
       }
       .results h3{display:none!important}
+      .report-customer{flex-shrink:0;font-size:10px!important;line-height:1.3!important;padding:3px 0 5px!important;margin:0 0 5px!important}
       .status{padding:7px!important;margin:0 0 8px!important;border-radius:6px!important}
       .status small{font-size:6.5px!important;line-height:1.15!important}
       .status strong{font-size:16px!important;line-height:1.2!important}
@@ -510,6 +512,7 @@
 
     <aside class="results" aria-live="polite">
       <h3>Výsledok pre zákazníka</h3>
+      <div class="report-customer"><b>Zákazník:</b> <span id="reportCustomer">–</span></div>
       <div class="status" id="statusBox">
         <small>Finančný rozdiel</small>
         <strong id="statusText">–</strong>
@@ -937,7 +940,8 @@
     v.innerHTML=warnings.map(x=>'• '+x).join('<br>');
 
     const customer=$('customer').value.trim();
-    $('reportMeta').textContent=(customer?customer+' • ':'')+'Výpočet: '+(costMode==='bill'?'podľa vyúčtovania':'podľa cenníka')+' • SCOP '+scop.toFixed(1).replace('.',',')+' • '+$('hpTariff').value;
+    $('reportCustomer').textContent=customer||'–';
+    $('reportMeta').textContent='Výpočet: '+(costMode==='bill'?'podľa vyúčtovania':'podľa cenníka')+' • SCOP '+scop.toFixed(1).replace('.',',')+' • '+$('hpTariff').value;
   }
 
   qsa('.mode-btn').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
@@ -963,7 +967,7 @@
     calculate();
   });
   $('greenGrant').addEventListener('change',calculate);
-  $('printBtn').addEventListener('click',()=>window.print());
+  $('printBtn').addEventListener('click',()=>{calculate();window.print()});
   $('resetBtn').addEventListener('click',()=>{
     $('customer').value='';$('periodMonths').value=12;$('sourceType').value='gas';$('energyAid').value='aid';
     $('hpInvestment').value=6500;$('greenGrant').checked=false;$('subsidyAmount').value=4000;$('scopPreset').value='3.5';$('scop').value=3.5;$('hpTariff').value='DD6';
