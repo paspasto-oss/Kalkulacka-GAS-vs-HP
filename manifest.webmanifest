@@ -1,0 +1,25 @@
+{
+  "name": "Spektra Install – Kalkulačka úspory TČ",
+  "short_name": "Úspora TČ",
+  "lang": "sk",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e9e7df",
+  "theme_color": "#e9e7df",
+  "icons": [
+    {
+      "src": "favicon/icon-192x192.png?v=20261004",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon/icon-512x512.png?v=20261004",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
